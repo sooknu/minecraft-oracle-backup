@@ -5,11 +5,11 @@ set -euo pipefail
 TIMEZONE="America/Los_Angeles"
 DNS="8.8.8.8 1.1.1.1"
 FALLBACK_DNS="9.9.9.9 1.0.0.1"
-DB_USER="sahid"
-DB_PASS="NX6ri4p5!"
+DB_USER="username"
+DB_PASS="password"
 USE_TAILSCALE_AUTH_KEY=true
-TAILSCALE_AUTH_KEY="tskey-auth-kCt2JkiDfy11CNTRL-M1Tm3HpQeHUyE54eaZyhJUJAM36XpfPUK"
-GITHUB_USERNAME="sooknu"
+TAILSCALE_AUTH_KEY="tskey-auth-xxxxxxxx"
+GITHUB_USERNAME="github_username"
 # ───────────────────────────────────────────────────────────
 
 # check if running as root

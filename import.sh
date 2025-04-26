@@ -3,18 +3,31 @@ set -euo pipefail
 
 # ── Configuration ───────────────────────────────────────────
 SERVICES=("velocity" "mc1" "mc2" "mc3")
+
 RESTART_SERVICES=true
-DB_USER="sahid"
-DB_PASSWORD="NX6ri4p5!"
-DB_DUMP_FILE="/home/ubuntu/backups/mariadb_backup.sql"
+
+DB_USER="user"
+DB_PASSWORD="password"
+DB_DUMP_FILE="/home/ubuntu/backups/db_dumps/mariadb_backup.sql"
+
+# Update these based on your server IP/domain mappings:
+# Format: "file_path;find_string;replace_string"
 CONFIG_UPDATES=(
-    "/home/ubuntu/mc1/plugins/ItemsAdder/config.yml;192.9.224.67;99.46.81.50"
-    "/home/ubuntu/mc2/plugins/ItemsAdder/config.yml;pack.sooknu.com;mcpack.sooknu.com"
-    "/home/ubuntu/mc3/plugins/ItemsAdder/config.yml;pack.sooknu.com;mcpack.sooknu.com"
-    "/home/ubuntu/velocity/velocity.toml;minecraft.sooknu.com;mc.sooknu.com"
+    # Example: Replace old Oracle server IP with new backup server IP
+    "/home/ubuntu/mc1/plugins/ItemsAdder/config.yml;OLDIP;NEWIP"
+    
+    # Example: Update texture pack domain
+    "/home/ubuntu/mc2/plugins/ItemsAdder/config.yml;old.website.com;new.website.com"
+    "/home/ubuntu/mc3/plugins/ItemsAdder/config.yml;old.website;new.website.com"
+    
+    # Example: Update Velocity proxy domain
+    "/home/ubuntu/velocity/velocity.toml;old.website.com;new.website.com"
 )
 
+# Discord Webhook (optional for notifications)
 DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/your-webhook-id/your-token"
+# ───────────────────────────────────────────────────────────
+
 
 # ── Main Orchestration ──────────────────────────────────────
 main() {

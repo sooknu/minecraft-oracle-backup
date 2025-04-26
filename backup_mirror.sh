@@ -1,28 +1,40 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
 # ── CONFIGURATION ───────────────────────────────────────────
-BACKUP_HOST="${BACKUP_HOST:-ubuntu@100.106.252.50}"
+
+# Backup server SSH destination
+# Example: ubuntu@your-backup-server-ip
+BACKUP_HOST="${BACKUP_HOST:-ubuntu@BACKUP_SERVER_IP}"
+
+# Source server folders and services
 SOURCE_DIR="/home/ubuntu"
 SERVICES=("velocity" "mc1" "mc2" "mc3")
 FOLDERS=("velocity" "mc1" "mc2" "mc3")
+
+# Local backup paths
 BACKUP_DIR="/home/ubuntu/backups"
 DB_DUMP_FILE="$BACKUP_DIR/db_dumps/mariadb_backup.sql"
-SSH_KEY="/home/ubuntu/.ssh/sooknu-cloud.key"
-TMP_DIR="/tmp/systemd_backup"
-LOG_FILE="/home/ubuntu/backups/logs/backup_mirror.log"
+LOG_FILE="$BACKUP_DIR/logs/backup_mirror.log"
 
-DB_USER="sahid"
-DB_PASSWORD="NX6ri4p5!"
+# SSH private key for connecting to backup server
+SSH_KEY="/home/ubuntu/.ssh/YOUR_PRIVATE_KEY.key"
+
+# Temporary folder on backup server for service files
+TMP_DIR="/tmp/systemd_backup"
+
+# Database credentials
+DB_USER="db_user"
+DB_PASSWORD="db_password"
 DB_HOST="localhost"
 DB_DUMP_CMD="/usr/bin/mariadb-dump"
 
+# Feature toggles
 ENABLE_FOLDERS=true
 ENABLE_SERVICES=true
 ENABLE_DATABASE=true
 ENABLE_REMOTE_IMPORT=true
 
+# Discord Webhook URL (optional)
 DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/your-webhook-id/your-token"
+
 
 # ── LOGGING SETUP ───────────────────────────────────────────
 mkdir -p "$(dirname "$LOG_FILE")"
