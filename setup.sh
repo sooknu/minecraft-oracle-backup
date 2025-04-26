@@ -9,7 +9,7 @@ DB_USER="sahid"
 DB_PASS="NX6ri4p5!"
 USE_TAILSCALE_AUTH_KEY=true
 TAILSCALE_AUTH_KEY="tskey-auth-kCt2JkiDfy11CNTRL-M1Tm3HpQeHUyE54eaZyhJUJAM36XpfPUK"
-
+GITHUB_USERNAME="sooknu"
 # ───────────────────────────────────────────────────────────
 
 # check if running as root
@@ -22,6 +22,7 @@ main() {
   install_dependencies
   secure_ssh_keys
   ubuntu_user
+  install_github_ssh_keys
   enable_passwordless_sudo
   set_timezone
   configure_dns
@@ -31,6 +32,7 @@ main() {
   install_tailscale
   echo "🎉 All done!"
 }
+
 
 # ── Function definitions ─────────────────────────────────
 
@@ -148,12 +150,28 @@ EOF
 
 # ───────────────────────────────────────────────────────────
 
-## install_dependencies: install basic required packages
+## INSTALL_DEPENDENCIES: install basic required packages
 install_dependencies() {
   echo ">>> Installing basic dependencies"
   sudo apt install -y nano curl dnsutils screen openjdk-21-jre-headless rsync
 }
 # ───────────────────────────────────────────────────────────
+
+## INSTALL_GITHUB_SSH_KEYS: Pull public SSH keys from GitHub and install
+install_github_ssh_keys() {
+  echo ">>> Installing public SSH keys from GitHub user: $GITHUB_USERNAME"
+
+  mkdir -p /home/ubuntu/.ssh
+  curl -fsSL "https://github.com/${GITHUB_USERNAME}.keys" >> /home/ubuntu/.ssh/authorized_keys
+  
+  chmod 700 /home/ubuntu/.ssh
+  chmod 600 /home/ubuntu/.ssh/authorized_keys
+  chown -R ubuntu:ubuntu /home/ubuntu/.ssh
+
+  echo "✅ Public SSH keys installed from GitHub."
+}
+# ───────────────────────────────────────────────────────────
+
 
 ## install_mariadb: install and set up MariaDB 11.4
 install_mariadb() {
@@ -272,7 +290,6 @@ secure_ssh_keys() {
   echo "✅ SSH keys secured."
 }
 # ───────────────────────────────────────────────────────────
-
 
 
 
