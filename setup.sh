@@ -5,11 +5,11 @@ set -euo pipefail
 TIMEZONE="America/Los_Angeles"
 DNS="8.8.8.8 1.1.1.1"
 FALLBACK_DNS="9.9.9.9 1.0.0.1"
-DB_USER="username"
-DB_PASS="password"
+DB_USER="sahid"
+DB_PASS="NX6ri4p5!"
 USE_TAILSCALE_AUTH_KEY=true
-TAILSCALE_AUTH_KEY="tskey-auth-xxxxxxxx"
-GITHUB_USERNAME="github_username"
+TAILSCALE_AUTH_KEY="xxxx-xx-xxxxxxxx"
+GITHUB_USERNAME="sooknu"
 # ───────────────────────────────────────────────────────────
 
 # check if running as root
@@ -18,6 +18,7 @@ GITHUB_USERNAME="github_username"
 # Main function: orchestrates the setup
 main() {
   check_internet
+  configure_dns
   update_system
   install_dependencies
   secure_ssh_keys
@@ -25,7 +26,6 @@ main() {
   install_github_ssh_keys
   enable_passwordless_sudo
   set_timezone
-  configure_dns
   create_backup_folders
   install_docker
   install_mariadb
@@ -36,26 +36,18 @@ main() {
 
 # ── Function definitions ─────────────────────────────────
 
-## check_internet: verify basic connectivity and DNS resolution
+## check_internet: verify raw internet access (skip DNS for now)
 check_internet() {
-  echo ">>> Checking internet connectivity..."
+  echo ">>> Checking raw internet connectivity..."
 
-  # First, ping a raw IP to check basic network
   if ping -c 1 8.8.8.8 &>/dev/null; then
-    echo "✅ Network connection to Internet verified (ping 8.8.8.8)."
+    echo "✅ Internet (raw IP) reachable."
   else
-    echo "🌐 ERROR: Cannot reach Internet (8.8.8.8 unreachable). Exiting." >&2
-    exit 1
-  fi
-
-  # Second, resolve and curl a domain to check DNS working
-  if curl -s --head --request GET https://google.com | grep "200 OK" > /dev/null; then
-    echo "✅ DNS resolution and web access verified (google.com reachable)."
-  else
-    echo "🌐 ERROR: DNS not resolving properly or web access blocked. Exiting." >&2
+    echo "🌐 ERROR: Cannot reach 8.8.8.8. Exiting." >&2
     exit 1
   fi
 }
+
 # ───────────────────────────────────────────────────────────
 
 
