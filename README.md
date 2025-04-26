@@ -1,5 +1,9 @@
 # MC-Network-Backup-Scripts
 
+![Bash](https://img.shields.io/badge/Bash-Scripts-green?logo=gnu-bash)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-blue)
+
 ## Overview
 This repository automates the backup, syncing, and recovery process for your Minecraft server network between a production server (e.g., Oracle Cloud) and a backup server (your secondary VPS/VM).
 
