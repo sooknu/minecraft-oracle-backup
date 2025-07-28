@@ -43,16 +43,6 @@ main() {
   echo "🎉 All done!"
 }
 
-# ── Dispatch ───────────────────────────────────────────────
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  if [[ $# -gt 0 ]] && declare -f "$1" &>/dev/null; then
-    "$@"
-  else
-    main
-  fi
-fi
-
-
 # ── Function definitions ─────────────────────────────────
 
 ## check_internet: verify raw internet access (skip DNS for now)
@@ -273,28 +263,23 @@ install_tailscale() {
 
   read -rp "Do you want to install and set up Tailscale? [y/N] " answer
   if [[ "$answer" =~ ^[Yy]$ ]]; then
-    # Install Tailscale
     echo ">>> Installing Tailscale..."
     curl -fsSL https://tailscale.com/install.sh | sh
 
-    # Enable and start Tailscale service
     echo ">>> Enabling and starting Tailscale service..."
     sudo systemctl enable --now tailscaled
 
-    # Ask about Auth Key
     read -rp "Do you want to use an Auth Key for automatic Tailscale login? [y/N] " use_authkey
     if [[ "$use_authkey" =~ ^[Yy]$ ]]; then
-      # First time, allow using saved key
       read -rp "Use saved Auth Key from config? [y/N] " use_saved_key
       if [[ "$use_saved_key" =~ ^[Yy]$ ]]; then
-        echo ">>> Running 'sudo tailscale up --authkey=${TAILSCALE_AUTH_KEY}'..."
-        if sudo tailscale up --authkey="${TAILSCALE_AUTH_KEY}"; then
+        echo ">>> Running 'sudo tailscale up --ssh --authkey=${TAILSCALE_AUTH_KEY}'..."
+        if sudo tailscale up --ssh --authkey="${TAILSCALE_AUTH_KEY}"; then
           spinner 3
           echo "✅ Tailscale authenticated with saved Auth Key."
           sleep 2
           echo
           echo "⚡ If authentication is required, follow any login link shown above."
-          echo "If no login is needed, you can just press ENTER to continue."
           read -r
           TAILSCALE_IP=$(tailscale ip -4 2>/dev/null || echo "Unknown")
           echo "✅ Tailscale installed and connected! (IP: ${TAILSCALE_IP})"
@@ -305,44 +290,39 @@ install_tailscale() {
         fi
       fi
 
-      # If failed or user chose not to use saved key, start manual retries
       while true; do
         read -rp "Enter your Tailscale Auth Key: " custom_authkey
-        echo ">>> Running 'sudo tailscale up --authkey=[entered key]'..."
-        if sudo tailscale up --authkey="${custom_authkey}"; then
+        echo ">>> Running 'sudo tailscale up --ssh --authkey=[entered key]'..."
+        if sudo tailscale up --ssh --authkey="${custom_authkey}"; then
           echo "✅ Tailscale authenticated with entered Auth Key."
           sleep 2
           break
         else
           echo "⚠️ Auth Key invalid or failed."
           sleep 2
-          read -rp "Do you want to retry entering a new Auth Key? [y/N] " retry_key
+          read -rp "Retry entering a new Auth Key? [y/N] " retry_key
           if [[ ! "$retry_key" =~ ^[Yy]$ ]]; then
-            echo ">>> Switching to manual 'tailscale up' login..."
-            sudo tailscale up
+            echo ">>> Switching to manual 'tailscale up --ssh' login..."
+            sudo tailscale up --ssh
             break
           fi
         fi
       done
     else
-      echo ">>> Running 'sudo tailscale up' (manual authentication required)..."
-      sudo tailscale up
+      echo ">>> Running 'sudo tailscale up --ssh' (manual authentication required)..."
+      sudo tailscale up --ssh
     fi
 
     echo
     echo "⚡ If authentication is required, follow any login link shown above."
-    echo "If no login is needed, you can just press ENTER to continue."
     read -r
 
-    # Always show the Tailscale IP after setup
     TAILSCALE_IP=$(tailscale ip -4 2>/dev/null || echo "Unknown")
     echo "✅ Tailscale installed and connected! (IP: ${TAILSCALE_IP})"
-
   else
     echo "-> Skipping Tailscale installation."
   fi
 }
-
 
 # ───────────────────────────────────────────────────────────
 
