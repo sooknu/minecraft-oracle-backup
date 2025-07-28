@@ -13,6 +13,9 @@ else
   exit 1
 fi
 
+# ── Runtime Configuration ──────────────────────────────────
+TMP_DIR="${TMP_DIR:-/tmp/systemd_backup}"  # Default fallback
+
 # ── Trap failure notification ──────────────────────────────
 trap '[[ "${ENABLE_DISCORD}" == true ]] && send_discord_notification "❌ Backup failed on $(hostname) at ${FUNCNAME[1]:-main}"' ERR
 
